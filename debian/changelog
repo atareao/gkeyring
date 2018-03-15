@@ -1,3 +1,9 @@
+gkeyring (0.1.1-0extras18.04.1) bionic; urgency=medium
+
+  * help by default
+
+ -- Lorenzo Carbonell <lorenzo.carbonell.cerezo@gmail.com>  Thu, 15 Mar 2018 13:16:15 +0100
+
 gkeyring (0.1.0-0extras18.04.0) bionic; urgency=medium
 
   * First release

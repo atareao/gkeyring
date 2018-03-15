@@ -150,6 +150,9 @@ def main():
                 return
             except Exception as e:
                 print(e)
+        else:
+            parser.print_help()
+            return
         exit(-1)
 
 
