@@ -1,0 +1,16 @@
+Source: gkeyring
+Section: utils
+Priority: extra
+Maintainer: Lorenzo Carbonell Cerezo <lorenzo.carbonell.cerezo@gmail.com>
+Build-Depends: debhelper (>= 9)
+Standards-Version: 3.9.4
+Homepage: http://www.atareao.es
+
+Package: gkeyring
+Architecture: all
+Depends: ${misc:Depends}, ${python:Depends},
+	python3,
+	gir1.2-gnomekeyring-1.0,
+	libc6
+Description: gkeyring
+ A simple tool to store and get passwords in the GNOME keyring
