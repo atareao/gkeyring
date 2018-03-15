@@ -60,7 +60,7 @@ class TheGnomeKeyring():
     def _set_value_to_gnomekeyring(self, description, name, value):
         """Store a value in the keyring."""
         attributes = GnomeKeyring.Attribute.list_new()
-        GnomeKeyring.Attribute.list_append_string(attributes, 'id', str(name))
+        GnomeKeyring.Attribute.list_append_string(attributes, 'key', str(name))
         keyring = GnomeKeyring.get_default_keyring_sync()[1]
         value = GnomeKeyring.item_create_sync(
             keyring, GnomeKeyring.ItemType.GENERIC_SECRET,
@@ -71,7 +71,7 @@ class TheGnomeKeyring():
         """Get a locked secret for threaded/multiprocessing use."""
         value = ""
         attrlist = GnomeKeyring.Attribute.list_new()
-        GnomeKeyring.Attribute.list_append_string(attrlist, 'id', str(name))
+        GnomeKeyring.Attribute.list_append_string(attrlist, 'key', str(name))
         result, found = GnomeKeyring.find_items_sync(
             GnomeKeyring.ItemType.GENERIC_SECRET, attrlist)
         if result == GnomeKeyring.Result.OK:
