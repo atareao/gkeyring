@@ -1,3 +1,9 @@
+gkeyring (0.2.0-0extras18.04.2ubuntu1) disco; urgency=medium
+
+  * Using python3-secret 
+
+ -- Lorenzo Carbonell <lorenzo.carbonell.cerezo@gmail.com>  Sat, 04 May 2019 08:00:53 +0200
+
 gkeyring (0.1.1-0extras18.04.2) bionic; urgency=medium
 
   * help by default
