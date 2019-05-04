@@ -1,3 +1,9 @@
+gkeyring (0.2.1-0extras18.04.2ubuntu2) disco; urgency=medium
+
+  * Now you can delete a password
+
+ -- Lorenzo Carbonell <lorenzo.carbonell.cerezo@gmail.com>  Sat, 04 May 2019 08:08:46 +0200
+
 gkeyring (0.2.0-0extras18.04.2ubuntu1) disco; urgency=medium
 
   * Using python3-secret 
