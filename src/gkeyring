@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # A helper for use GNOME Keyring from terminal
@@ -19,84 +19,19 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import gi
-try:
-    gi.require_version('GnomeKeyring', '1.0')
-except Exception as e:
-    print(e)
-    exit(-1)
-from gi.repository import GnomeKeyring
+import keyring
 from optparse import OptionParser
-import ctypes
-
-libc = ctypes.CDLL("libc.so.6")
 _ = str
-
-
-def mlock(var):
-    if var:
-        libc.mlock(var, len(var))
-
-
-def munlock(var):
-    if var:
-        libc.munlock(var, len(var))
-
-
-class NoPasswordFound(Exception):
-    def __str__(self):
-        return 'No password found'
-
-
-class GnomeKeyringLocked(Exception):
-    def __str__(self):
-        return 'Gnome Keyring Locked'
-
-
-class TheGnomeKeyring():
-    def __init__(self):
-        pass
-
-    def _set_value_to_gnomekeyring(self, description, name, value):
-        """Store a value in the keyring."""
-        attributes = GnomeKeyring.Attribute.list_new()
-        GnomeKeyring.Attribute.list_append_string(attributes, 'key', str(name))
-        keyring = GnomeKeyring.get_default_keyring_sync()[1]
-        value = GnomeKeyring.item_create_sync(
-            keyring, GnomeKeyring.ItemType.GENERIC_SECRET,
-            description, attributes, str(value), True)
-        return value[1]
-
-    def _get_value_from_gnomekeyring(self, name):
-        """Get a locked secret for threaded/multiprocessing use."""
-        value = ""
-        attrlist = GnomeKeyring.Attribute.list_new()
-        GnomeKeyring.Attribute.list_append_string(attrlist, 'key', str(name))
-        result, found = GnomeKeyring.find_items_sync(
-            GnomeKeyring.ItemType.GENERIC_SECRET, attrlist)
-        if result == GnomeKeyring.Result.OK:
-            value = found[0].secret
-            mlock(value)
-            return value
-        elif result == GnomeKeyring.Result.NO_MATCH:
-            raise(NoPasswordFound())
-        raise(GnomeKeyringLocked())
-
-    def get(self, description, key):
-        return self._get_value_from_gnomekeyring(key)
-
-    def set(self, description, key, value):
-        return self._set_value_to_gnomekeyring(description, key, value)
 
 
 def main():
         usage_msg = _('usage: %prog [options]')
         parser = OptionParser(usage=usage_msg, add_help_option=False)
-        parser.add_option('-d', '--description',
+        parser.add_option('-r', '--ring',
                           action='store',
-                          dest='description',
+                          dest='ring',
                           default=False,
-                          help=_('description of the password (optional).'))
+                          help=_('the name of the keyring (default "system").'))
         parser.add_option('-g', '--get',
                           action='store_true',
                           dest='get',
@@ -123,37 +58,44 @@ def main():
                           default=False,
                           help=_('set password.'))
         (options, args) = parser.parse_args()
-        if options.help:
-            parser.print_help()
-            return
-        elif options.get:
+        if options.get:
             if options.key is False:
                 print(_('Error, "password key" is missing'))
-            gk = TheGnomeKeyring()
-            try:
-                print(gk.get(options.description, options.key))
-                return
-            except Exception as e:
-                print(e)
+            else:
+                try:
+                    if options.ring is False:
+                        keyring_name = 'system'
+                    else:
+                        keyring_name = str(options.ring)
+                    keyring.get_keyring()
+                    ans = keyring.get_password(keyring_name, options.key)
+                    if ans is None:
+                        exit(-1)
+                    else:
+                        print(ans)
+                    return
+                except Exception as e:
+                    print(e)
         elif options.set:
             if options.key is False:
                 print(_('Error, "password key" is missing'))
-            if options.password is False:
-                print(_('Error, "password" is missing'))
-            gk = TheGnomeKeyring()
-            try:
-                if options.description is False:
-                    description = ''
+            else:
+                if options.password is False:
+                    print(_('Error, "password" is missing'))
                 else:
-                    description = str(options.description)
-                gk.set(description, options.key, options.password)
-                return
-            except Exception as e:
-                print(e)
-        else:
-            parser.print_help()
-            return
-        exit(-1)
+                    try:
+                        if options.ring is False:
+                            keyring_name = 'system'
+                        else:
+                            keyring_name = str(options.ring)
+                        keyring.get_keyring()
+                        keyring.set_password(keyring_name, options.key,
+                                             options.password)
+                        return
+                    except Exception as e:
+                        print(e)
+        parser.print_help()
+        exit()
 
 
 if __name__ == '__main__':

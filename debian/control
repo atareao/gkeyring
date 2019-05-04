@@ -10,7 +10,6 @@ Package: gkeyring
 Architecture: all
 Depends: ${misc:Depends}, ${python:Depends},
 	python3,
-	gir1.2-gnomekeyring-1.0,
-	libc6
+	python3-keyring
 Description: gkeyring
  A simple tool to store and get passwords in the GNOME keyring
